@@ -1,0 +1,65 @@
+# Extensible registry of employer job boards. Add a line to add a company - no code changes.
+#
+#   ats:             greenhouse | lever | ashby
+#   board:           the board token / site name from the company's careers URL
+#                    (boards.greenhouse.io/<board>, jobs.lever.co/<board>, jobs.ashbyhq.com/<board>)
+#   company:         display name
+#   employer_domains: domains owned by the employer (used when verifying official apply URLs)
+#   region:          lever only: "eu" if the board lives on api.eu.lever.co
+#
+# IMPORTANT: entries are STARTING POINTS. Board tokens were not live-verified when this file was written.
+# Run `python scripts/verify_sources.py` - any board that does not answer is reported and never shown to users.
+sources:
+  # --- Greenhouse ---
+  - {ats: greenhouse, board: anthropic,   company: Anthropic,   employer_domains: [anthropic.com]}
+  - {ats: greenhouse, board: databricks,  company: Databricks,  employer_domains: [databricks.com]}
+  - {ats: greenhouse, board: stripe,      company: Stripe,      employer_domains: [stripe.com]}
+  - {ats: greenhouse, board: airbnb,      company: Airbnb,      employer_domains: [airbnb.com]}
+  - {ats: greenhouse, board: cloudflare,  company: Cloudflare,  employer_domains: [cloudflare.com]}
+  - {ats: greenhouse, board: datadog,     company: Datadog,     employer_domains: [datadoghq.com]}
+  - {ats: greenhouse, board: figma,       company: Figma,       employer_domains: [figma.com]}
+  - {ats: greenhouse, board: mongodb,     company: MongoDB,     employer_domains: [mongodb.com]}
+  - {ats: greenhouse, board: gitlab,      company: GitLab,      employer_domains: [gitlab.com]}
+  - {ats: greenhouse, board: twilio,      company: Twilio,      employer_domains: [twilio.com]}
+  - {ats: greenhouse, board: scaleai,     company: Scale AI,    employer_domains: [scale.com]}
+  - {ats: greenhouse, board: pinterest,   company: Pinterest,   employer_domains: [pinterest.com]}
+  - {ats: greenhouse, board: coinbase,    company: Coinbase,    employer_domains: [coinbase.com]}
+  - {ats: greenhouse, board: razorpaysoftwareprivatelimited, company: Razorpay, employer_domains: [razorpay.com]}
+  # --- Lever ---
+  - {ats: lever, board: palantir, company: Palantir,   employer_domains: [palantir.com]}
+  - {ats: lever, board: mistral,  company: Mistral AI, employer_domains: [mistral.ai]}
+  - {ats: lever, board: plaid,    company: Plaid,      employer_domains: [plaid.com]}
+  - {ats: lever, board: cred,     company: CRED,       employer_domains: [cred.club]}
+  # --- Ashby ---
+  - {ats: ashby, board: openai,     company: OpenAI,     employer_domains: [openai.com]}
+  - {ats: ashby, board: notion,     company: Notion,     employer_domains: [notion.so, notion.com]}
+  - {ats: ashby, board: ramp,       company: Ramp,       employer_domains: [ramp.com]}
+  - {ats: ashby, board: linear,     company: Linear,     employer_domains: [linear.app]}
+  - {ats: ashby, board: cohere,     company: Cohere,     employer_domains: [cohere.com]}
+  - {ats: ashby, board: elevenlabs, company: ElevenLabs, employer_domains: [elevenlabs.io]}
+  - {ats: ashby, board: replit,     company: Replit,     employer_domains: [replit.com]}
+
+  # --- More employers that hire in India (candidates; unverified until `scripts/verify_sources.py` says OK) ---
+  - {ats: greenhouse, board: postman,    company: Postman,    employer_domains: [postman.com]}
+  - {ats: greenhouse, board: druva,      company: Druva,      employer_domains: [druva.com]}
+  - {ats: greenhouse, board: groww,      company: Groww,      employer_domains: [groww.in]}
+  - {ats: greenhouse, board: browserstack, company: BrowserStack, employer_domains: [browserstack.com]}
+  - {ats: greenhouse, board: hashicorp,  company: HashiCorp,  employer_domains: [hashicorp.com]}
+  - {ats: greenhouse, board: samsara,    company: Samsara,    employer_domains: [samsara.com]}
+  - {ats: greenhouse, board: okta,       company: Okta,       employer_domains: [okta.com]}
+  - {ats: greenhouse, board: elastic,    company: Elastic,    employer_domains: [elastic.co]}
+  - {ats: greenhouse, board: zscaler,    company: Zscaler,    employer_domains: [zscaler.com]}
+  - {ats: greenhouse, board: lyft,       company: Lyft,       employer_domains: [lyft.com]}
+  - {ats: greenhouse, board: dropbox,    company: Dropbox,    employer_domains: [dropbox.com]}
+  - {ats: greenhouse, board: instacart,  company: Instacart,  employer_domains: [instacart.com]}
+  - {ats: lever, board: meesho,    company: Meesho,      employer_domains: [meesho.io]}
+  - {ats: lever, board: swiggy,    company: Swiggy,      employer_domains: [swiggy.com]}
+  - {ats: lever, board: phonepe,   company: PhonePe,     employer_domains: [phonepe.com]}
+  - {ats: lever, board: upgrad,    company: upGrad,      employer_domains: [upgrad.com]}
+  - {ats: lever, board: zeta,      company: Zeta,        employer_domains: [zeta.tech]}
+  - {ats: lever, board: dreamsports, company: Dream Sports, employer_domains: [dreamsports.group]}
+  - {ats: lever, board: whatfix,   company: Whatfix,     employer_domains: [whatfix.com]}
+  - {ats: lever, board: highspot,  company: Highspot,    employer_domains: [highspot.com]}
+  - {ats: ashby, board: sarvam,    company: Sarvam AI,   employer_domains: [sarvam.ai]}
+  - {ats: ashby, board: vercel,    company: Vercel,      employer_domains: [vercel.com]}
+  - {ats: ashby, board: supabase,  company: Supabase,    employer_domains: [supabase.com]}

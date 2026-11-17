@@ -1,0 +1,177 @@
+{
+ "generated_at": "2026-11-17T07:36:18+00:00",
+ "embedding_backend": "hashing-bow",
+ "semantic_backend": false,
+ "skills": {
+  "precision": 1.0,
+  "recall": 1.0,
+  "f1": 1.0,
+  "tp": 70,
+  "fp": 0,
+  "fn": 0,
+  "misses": {},
+  "extras": {}
+ },
+ "roles": {
+  "n": 10,
+  "top1_accuracy": 1.0,
+  "top3_accuracy": 1.0,
+  "macro_precision": 1.0,
+  "macro_recall": 1.0,
+  "macro_f1": 1.0,
+  "confusion": {
+   "labels": [
+    "ai_automation",
+    "app_dev",
+    "data_analyst",
+    "data_scientist",
+    "fullstack_dev",
+    "genai_engineer",
+    "ml_engineer",
+    "nlp_engineer",
+    "python_dev",
+    "software_dev"
+   ],
+   "matrix": [
+    [
+     1,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     1
+    ]
+   ]
+  },
+  "wrong": {}
+ },
+ "matching": {
+  "n_resumes": 5,
+  "n_jobs": 6,
+  "mean_ndcg_at_3": 0.899,
+  "mean_pairwise_accuracy": 0.83,
+  "top1_is_most_relevant": 1.0
+ },
+ "retrieval": {
+  "n_queries": 5,
+  "hit_at_1": 0.8,
+  "hit_at_3": 1.0,
+  "store_backend": "memory"
+ },
+ "llm": {
+  "measured": false,
+  "reason": "No LLM configured (LLM_PROVIDER=none). Structured-output validity and groundedness were NOT measured."
+ }
+}

@@ -1,0 +1,145 @@
+{
+ "_note": "SYNTHETIC TEST FIXTURES written for this project and labelled by hand. Not real people. Not evidence of real-world performance.",
+ "resumes": [
+  {
+   "id": "f01",
+   "gold_role": "genai_engineer",
+   "gold_skills": [
+    "Python",
+    "RAG",
+    "LLMs",
+    "Vector Databases",
+    "FastAPI",
+    "Docker",
+    "LangChain",
+    "Prompt Engineering",
+    "Git"
+   ],
+   "text": "Asha One\nasha1@example.com\nSKILLS\nPython, Git, Docker\nPROJECTS\nPolicy Assistant\nBuilt a RAG chatbot with LangChain, ChromaDB and FastAPI using prompt engineering to answer questions about company policies with an LLM.\nContainerised the service with Docker."
+  },
+  {
+   "id": "f02",
+   "gold_role": "data_analyst",
+   "gold_skills": [
+    "SQL",
+    "Excel",
+    "Power BI",
+    "Data Visualization",
+    "Python",
+    "Pandas"
+   ],
+   "text": "Bala Two\nbala2@example.com\nSKILLS\nSQL, Excel, Power BI, Python\nPROJECTS\nSales Dashboard\nBuilt a Power BI dashboard from SQL queries on retail data and cleaned it with Pandas for data visualization of monthly sales."
+  },
+  {
+   "id": "f03",
+   "gold_role": "fullstack_dev",
+   "gold_skills": [
+    "JavaScript",
+    "React",
+    "Node.js",
+    "PostgreSQL",
+    "HTML",
+    "CSS",
+    "REST APIs",
+    "Git",
+    "TypeScript"
+   ],
+   "text": "Chitra Three\nchitra3@example.com\nSKILLS\nJavaScript, TypeScript, HTML, CSS, Git\nPROJECTS\nTask Board\nBuilt a React front-end with Node.js REST APIs and a PostgreSQL database."
+  },
+  {
+   "id": "f04",
+   "gold_role": "ml_engineer",
+   "gold_skills": [
+    "Python",
+    "Machine Learning",
+    "Scikit-learn",
+    "Pandas",
+    "Feature Engineering",
+    "Statistics",
+    "MLflow",
+    "Docker"
+   ],
+   "text": "Dev Four\ndev4@example.com\nSKILLS\nPython, Statistics, Docker\nPROJECTS\nChurn Model\nTrained Scikit-learn models with Pandas feature engineering for machine learning, tracked runs with MLflow and packaged with Docker."
+  },
+  {
+   "id": "f05",
+   "gold_role": "nlp_engineer",
+   "gold_skills": [
+    "Python",
+    "Natural Language Processing",
+    "Transformers",
+    "Hugging Face",
+    "PyTorch",
+    "Machine Learning"
+   ],
+   "text": "Esha Five\nesha5@example.com\nSKILLS\nPython, PyTorch\nPROJECTS\nSentiment Classifier\nFine tuned BERT with Hugging Face and PyTorch for NLP sentiment analysis, a machine learning task on tweets."
+  },
+  {
+   "id": "f06",
+   "gold_role": "data_scientist",
+   "gold_skills": [
+    "Python",
+    "Statistics",
+    "Machine Learning",
+    "Pandas",
+    "NumPy",
+    "A/B Testing",
+    "SQL",
+    "Data Visualization"
+   ],
+   "text": "Farah Six\nfarah6@example.com\nSKILLS\nPython, SQL, Statistics\nPROJECTS\nExperiment Analysis\nRan A/B testing analysis with Pandas and NumPy, applied statistics and machine learning, and made data visualization reports."
+  },
+  {
+   "id": "f07",
+   "gold_role": "software_dev",
+   "gold_skills": [
+    "Java",
+    "Data Structures and Algorithms",
+    "Object-Oriented Programming",
+    "Git",
+    "SQL",
+    "DBMS"
+   ],
+   "text": "Gopal Seven\ngopal7@example.com\nSKILLS\nJava, Git, SQL, DSA, OOP, DBMS\nPROJECTS\nLibrary System\nBuilt a Java library system using object oriented programming and a SQL database."
+  },
+  {
+   "id": "f08",
+   "gold_role": "ai_automation",
+   "gold_skills": [
+    "Python",
+    "AI Agents",
+    "LLMs",
+    "REST APIs",
+    "FastAPI",
+    "Prompt Engineering"
+   ],
+   "text": "Hema Eight\nhema8@example.com\nSKILLS\nPython, REST APIs\nPROJECTS\nSupport Agent\nBuilt an agentic workflow with an LLM that calls REST APIs through FastAPI tools, with prompt engineering for ticket triage."
+  },
+  {
+   "id": "f09",
+   "gold_role": "python_dev",
+   "gold_skills": [
+    "Python",
+    "Flask",
+    "PostgreSQL",
+    "REST APIs",
+    "Software Testing",
+    "Git",
+    "Linux"
+   ],
+   "text": "Imran Nine\nimran9@example.com\nSKILLS\nPython, Git, Linux\nPROJECTS\nInventory API\nBuilt a Flask REST API on PostgreSQL with pytest unit testing."
+  },
+  {
+   "id": "f10",
+   "gold_role": "app_dev",
+   "gold_skills": [
+    "Salesforce",
+    "SQL",
+    "Object-Oriented Programming",
+    "REST APIs",
+    "Agile"
+   ],
+   "text": "Jaya Ten\njaya10@example.com\nSKILLS\nSQL, OOP\nPROJECTS\nCRM Customisation\nCustomised Salesforce with Apex triggers, REST API integration and Agile sprints for a student club."
+  }
+ ]
+}

@@ -1,155 +1,206 @@
-"""
-Domain models for CareerPilot AI.
-
-These are lightweight dataclasses, not an ORM — repositories convert
-sqlite3.Row objects into these so the rest of the app works with typed
-objects instead of raw dict-like rows.
-
-NOTE on multi-user: v1 ships in "single browser session = single student"
-mode (DEFAULT_USER_ID from config). The schema is already fully
-multi-user (every table is keyed by user_id with foreign keys), so adding
-real authentication later is a UI-layer change, not a data-model change.
-"""
+"""ORM models. Every user-owned table carries user_id and is only reached through repositories
+that always filter on it (see repositories/*)."""
 from __future__ import annotations
 
-import json
-from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
-
-@dataclass
-class User:
-    id: int
-    name: str
-    email: Optional[str]
-    created_at: str
+from sqlalchemy import (JSON, Boolean, DateTime, Float, ForeignKey, Index, Integer, String, Text,
+                        UniqueConstraint, false)
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+from sqlalchemy.types import TypeDecorator
 
 
-@dataclass
-class Resume:
-    id: int
-    user_id: int
-    filename: str
-    raw_text: str
-    extracted_skills: list[str] = field(default_factory=list)
-    is_active: bool = True
-    created_at: str = ""
-
-    @staticmethod
-    def from_row(row) -> "Resume":
-        return Resume(
-            id=row["id"],
-            user_id=row["user_id"],
-            filename=row["filename"],
-            raw_text=row["raw_text"],
-            extracted_skills=json.loads(row["extracted_skills"] or "[]"),
-            is_active=bool(row["is_active"]),
-            created_at=row["created_at"],
-        )
+def utcnow() -> datetime:
+    return datetime.now(timezone.utc)
 
 
-@dataclass
-class Job:
-    id: int
-    source: str
-    company: str
-    role: str
-    description: str = ""
-    required_skills: list[str] = field(default_factory=list)
-    location: str = ""
-    url: str = ""
-    posted_at: str = ""
-    discovered_at: str = ""
-    external_id: str = ""
+class UTCDateTime(TypeDecorator):
+    """Always timezone-aware UTC in Python, whatever the backend stores (SQLite drops tzinfo)."""
+    impl = DateTime(timezone=True)
+    cache_ok = True
 
-    @staticmethod
-    def from_row(row) -> "Job":
-        return Job(
-            id=row["id"],
-            source=row["source"],
-            company=row["company"],
-            role=row["role"],
-            description=row["description"] or "",
-            required_skills=json.loads(row["required_skills"] or "[]"),
-            location=row["location"] or "",
-            url=row["url"] or "",
-            posted_at=row["posted_at"] or "",
-            discovered_at=row["discovered_at"] or "",
-            external_id=row["external_id"] or "",
-        )
+    def process_bind_param(self, value, dialect):
+        if value is None:
+            return None
+        return value.replace(tzinfo=timezone.utc) if value.tzinfo is None else value.astimezone(timezone.utc)
+
+    def process_result_value(self, value, dialect):
+        if value is None:
+            return None
+        return value.replace(tzinfo=timezone.utc) if value.tzinfo is None else value.astimezone(timezone.utc)
 
 
-@dataclass
-class Application:
-    id: int
-    user_id: int
-    company: str
-    role: str
-    status: str
-    applied_at: str
-    updated_at: str
-    job_id: Optional[int] = None
-    notes: str = ""
-
-    @staticmethod
-    def from_row(row) -> "Application":
-        return Application(
-            id=row["id"],
-            user_id=row["user_id"],
-            job_id=row["job_id"],
-            company=row["company"],
-            role=row["role"],
-            status=row["status"],
-            applied_at=row["applied_at"],
-            updated_at=row["updated_at"],
-            notes=row["notes"] or "",
-        )
+class Base(DeclarativeBase):
+    pass
 
 
-@dataclass
-class Notification:
-    id: int
-    user_id: int
-    type: str
-    title: str
-    body: str
-    is_read: bool
-    created_at: str
-    job_id: Optional[int] = None
-
-    @staticmethod
-    def from_row(row) -> "Notification":
-        return Notification(
-            id=row["id"],
-            user_id=row["user_id"],
-            type=row["type"],
-            title=row["title"],
-            body=row["body"] or "",
-            job_id=row["job_id"],
-            is_read=bool(row["is_read"]),
-            created_at=row["created_at"],
-        )
+class User(Base):
+    __tablename__ = "users"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    email: Mapped[str] = mapped_column(String(254), unique=True, index=True)
+    name: Mapped[str] = mapped_column(String(120), default="")
+    password_hash: Mapped[str] = mapped_column(String(255))
+    failed_logins: Mapped[int] = mapped_column(Integer, default=0)
+    locked_until: Mapped[Optional[datetime]] = mapped_column(UTCDateTime(), nullable=True)
+    ai_training_consent: Mapped[bool] = mapped_column(Boolean, default=False)  # never used for training unless True
+    created_at: Mapped[datetime] = mapped_column(UTCDateTime(), default=utcnow)
 
 
-@dataclass
-class JobMatch:
-    id: int
-    user_id: int
-    job_id: int
-    match_score: int
-    matched_skills: list[str] = field(default_factory=list)
-    resume_id: Optional[int] = None
-    computed_at: str = ""
+class AuthSession(Base):
+    __tablename__ = "auth_sessions"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    token_hash: Mapped[str] = mapped_column(String(64), unique=True, index=True)  # sha256 of the token
+    expires_at: Mapped[datetime] = mapped_column(UTCDateTime())
+    created_at: Mapped[datetime] = mapped_column(UTCDateTime(), default=utcnow)
 
-    @staticmethod
-    def from_row(row) -> "JobMatch":
-        return JobMatch(
-            id=row["id"],
-            user_id=row["user_id"],
-            job_id=row["job_id"],
-            resume_id=row["resume_id"],
-            match_score=row["match_score"],
-            matched_skills=json.loads(row["matched_skills"] or "[]"),
-            computed_at=row["computed_at"],
-        )
+
+class RateLimitEvent(Base):
+    __tablename__ = "rate_limit_events"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    bucket: Mapped[str] = mapped_column(String(40))
+    created_at: Mapped[datetime] = mapped_column(UTCDateTime(), default=utcnow, index=True)
+
+
+class ResumeProfile(Base):
+    """One uploaded resume + its validated structured profile."""
+    __tablename__ = "resume_profiles"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    filename: Mapped[str] = mapped_column(String(255))
+    content_hash: Mapped[str] = mapped_column(String(64))  # sha256 of file bytes -> skip reprocessing
+    raw_text: Mapped[str] = mapped_column(Text)
+    profile: Mapped[dict] = mapped_column(JSON)  # ResumeProfile pydantic dump (user-correctable)
+    extraction_method: Mapped[str] = mapped_column(String(40), default="deterministic")
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    user_edited: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[datetime] = mapped_column(UTCDateTime(), default=utcnow)
+    skills: Mapped[list["ExtractedSkill"]] = relationship(cascade="all, delete-orphan", back_populates="resume")
+    __table_args__ = (UniqueConstraint("user_id", "content_hash", name="uq_resume_user_hash"),)
+
+
+class ExtractedSkill(Base):
+    __tablename__ = "extracted_skills"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    resume_id: Mapped[int] = mapped_column(ForeignKey("resume_profiles.id", ondelete="CASCADE"), index=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    name: Mapped[str] = mapped_column(String(80))
+    category: Mapped[str] = mapped_column(String(40))
+    strength: Mapped[str] = mapped_column(String(20))  # demonstrated | listed
+    evidence: Mapped[list] = mapped_column(JSON, default=list)
+    resume: Mapped[ResumeProfile] = relationship(back_populates="skills")
+
+
+
+
+class AIAnalysis(Base):
+    """Cached AI/analysis outputs per resume (role recs, quality report, roadmap, explanations)."""
+    __tablename__ = "ai_analyses"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    resume_id: Mapped[int] = mapped_column(ForeignKey("resume_profiles.id", ondelete="CASCADE"), index=True)
+    kind: Mapped[str] = mapped_column(String(40))  # roles|quality|skill_gap|roadmap|readiness|explanation:<opp>|cover_letter:<opp>
+    payload: Mapped[dict] = mapped_column(JSON)
+    provider: Mapped[str] = mapped_column(String(40), default="deterministic")
+    created_at: Mapped[datetime] = mapped_column(UTCDateTime(), default=utcnow)
+    __table_args__ = (UniqueConstraint("resume_id", "kind", name="uq_analysis_resume_kind"),)
+
+
+class DataSource(Base):
+    """One configured employer board (e.g. greenhouse:anthropic) and its health."""
+    __tablename__ = "data_sources"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    source_key: Mapped[str] = mapped_column(String(120), unique=True)  # "greenhouse:stripe"
+    ats: Mapped[str] = mapped_column(String(20))
+    board: Mapped[str] = mapped_column(String(120))
+    company: Mapped[str] = mapped_column(String(160))
+    last_attempt_at: Mapped[Optional[datetime]] = mapped_column(UTCDateTime(), nullable=True)
+    last_success_at: Mapped[Optional[datetime]] = mapped_column(UTCDateTime(), nullable=True)
+    last_status: Mapped[str] = mapped_column(String(20), default="never_run")  # ok|error|not_found|never_run
+    last_error: Mapped[str] = mapped_column(Text, default="")
+    jobs_seen: Mapped[int] = mapped_column(Integer, default=0)
+
+
+class Opportunity(Base):
+    __tablename__ = "opportunities"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    source_key: Mapped[str] = mapped_column(String(120), index=True)
+    external_id: Mapped[str] = mapped_column(String(160))
+    company: Mapped[str] = mapped_column(String(160), index=True)
+    title: Mapped[str] = mapped_column(String(300))
+    description: Mapped[str] = mapped_column(Text)
+    location: Mapped[str] = mapped_column(String(300), default="")
+    work_mode: Mapped[str] = mapped_column(String(20), default="unknown")  # remote|hybrid|onsite|unknown
+    employment_type: Mapped[str] = mapped_column(String(30), default="unknown")  # internship|full_time|part_time|contract|unknown
+    is_internship: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
+    posting_url: Mapped[str] = mapped_column(String(1000))
+    apply_url: Mapped[str] = mapped_column(String(1000))
+    apply_url_verified: Mapped[bool] = mapped_column(Boolean, default=False)  # host belongs to employer/ATS
+    link_kind: Mapped[str] = mapped_column(String(20), default="official", server_default="official")  # official | aggregator (licensed API, not employer-direct)
+    stipend_text: Mapped[str] = mapped_column(String(200), default="", server_default="")  # exactly what the posting says about pay
+    is_paid: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True)  # None = posting does not say
+    is_india: Mapped[bool] = mapped_column(Boolean, default=False, server_default=false(), index=True)
+    posted_at: Mapped[Optional[datetime]] = mapped_column(UTCDateTime(), nullable=True)
+    deadline: Mapped[Optional[datetime]] = mapped_column(UTCDateTime(), nullable=True)
+    required_skills: Mapped[list] = mapped_column(JSON, default=list)
+    dedupe_key: Mapped[str] = mapped_column(String(64), index=True)
+    status: Mapped[str] = mapped_column(String(20), default="open", index=True)  # open|unavailable|unverified
+    first_seen_at: Mapped[datetime] = mapped_column(UTCDateTime(), default=utcnow)
+    last_seen_at: Mapped[datetime] = mapped_column(UTCDateTime(), default=utcnow)
+    last_verified_at: Mapped[datetime] = mapped_column(UTCDateTime(), default=utcnow)
+    __table_args__ = (UniqueConstraint("source_key", "external_id", name="uq_opp_source_ext"),
+                      Index("ix_opp_status_internship", "status", "is_internship"))
+
+
+class OpportunityMatch(Base):
+    __tablename__ = "opportunity_matches"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    resume_id: Mapped[int] = mapped_column(ForeignKey("resume_profiles.id", ondelete="CASCADE"))
+    opportunity_id: Mapped[int] = mapped_column(ForeignKey("opportunities.id", ondelete="CASCADE"), index=True)
+    score: Mapped[float] = mapped_column(Float)
+    detail: Mapped[dict] = mapped_column(JSON)  # component scores, matched/missing skills, concerns
+    computed_at: Mapped[datetime] = mapped_column(UTCDateTime(), default=utcnow)
+    __table_args__ = (UniqueConstraint("user_id", "resume_id", "opportunity_id", name="uq_match"),)
+
+
+class SavedOpportunity(Base):
+    __tablename__ = "saved_opportunities"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    opportunity_id: Mapped[int] = mapped_column(ForeignKey("opportunities.id", ondelete="CASCADE"))
+    not_interested: Mapped[bool] = mapped_column(Boolean, default=False)
+    saved_at: Mapped[datetime] = mapped_column(UTCDateTime(), default=utcnow)
+    __table_args__ = (UniqueConstraint("user_id", "opportunity_id", name="uq_saved"),)
+
+
+class Application(Base):
+    __tablename__ = "applications"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    opportunity_id: Mapped[Optional[int]] = mapped_column(ForeignKey("opportunities.id", ondelete="SET NULL"), nullable=True)
+    company: Mapped[str] = mapped_column(String(160))
+    role: Mapped[str] = mapped_column(String(300))
+    listing_url: Mapped[str] = mapped_column(String(1000), default="")
+    status: Mapped[str] = mapped_column(String(20), default="Interested")
+    applied_on: Mapped[Optional[datetime]] = mapped_column(UTCDateTime(), nullable=True)
+    interview_on: Mapped[Optional[datetime]] = mapped_column(UTCDateTime(), nullable=True)
+    follow_up_on: Mapped[Optional[datetime]] = mapped_column(UTCDateTime(), nullable=True)
+    notes: Mapped[str] = mapped_column(Text, default="")
+    created_at: Mapped[datetime] = mapped_column(UTCDateTime(), default=utcnow)
+    updated_at: Mapped[datetime] = mapped_column(UTCDateTime(), default=utcnow, onupdate=utcnow)
+    __table_args__ = (UniqueConstraint("user_id", "opportunity_id", name="uq_app_user_opp"),)
+
+
+class Notification(Base):
+    """In-app reminders (e.g. follow-up due). Surfaced inside the Tracker, not as a separate page."""
+    __tablename__ = "notifications"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    kind: Mapped[str] = mapped_column(String(30))
+    message: Mapped[str] = mapped_column(String(500))
+    ref_application_id: Mapped[Optional[int]] = mapped_column(ForeignKey("applications.id", ondelete="CASCADE"), nullable=True)
+    is_read: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[datetime] = mapped_column(UTCDateTime(), default=utcnow)

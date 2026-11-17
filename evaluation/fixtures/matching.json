@@ -1,0 +1,71 @@
+{
+ "_note": "SYNTHETIC test fixtures. Relevance graded by hand: 2 strong, 1 partial, 0 unrelated.",
+ "jobs": [
+  {
+   "id": "j_genai",
+   "text": "Generative AI Intern. Build RAG pipelines with LLMs, LangChain and vector databases in Python."
+  },
+  {
+   "id": "j_ml",
+   "text": "Machine Learning Intern. Train models with Scikit-learn and Pandas, statistics, MLflow."
+  },
+  {
+   "id": "j_analyst",
+   "text": "Data Analyst Intern. SQL, Excel and Power BI dashboards and data visualization."
+  },
+  {
+   "id": "j_web",
+   "text": "Frontend Developer Intern. React, TypeScript, HTML, CSS and REST APIs."
+  },
+  {
+   "id": "j_sales",
+   "text": "Sales Associate. Cold calling, CRM, negotiation, quota targets and customer relationships."
+  },
+  {
+   "id": "j_java",
+   "text": "Software Developer Intern. Java, data structures and algorithms, object-oriented design, SQL."
+  }
+ ],
+ "relevance": {
+  "f01": {
+   "j_genai": 2,
+   "j_ml": 1,
+   "j_analyst": 0,
+   "j_web": 0,
+   "j_sales": 0,
+   "j_java": 0
+  },
+  "f02": {
+   "j_genai": 0,
+   "j_ml": 1,
+   "j_analyst": 2,
+   "j_web": 0,
+   "j_sales": 0,
+   "j_java": 0
+  },
+  "f03": {
+   "j_genai": 0,
+   "j_ml": 0,
+   "j_analyst": 0,
+   "j_web": 2,
+   "j_sales": 0,
+   "j_java": 1
+  },
+  "f04": {
+   "j_genai": 1,
+   "j_ml": 2,
+   "j_analyst": 1,
+   "j_web": 0,
+   "j_sales": 0,
+   "j_java": 0
+  },
+  "f07": {
+   "j_genai": 0,
+   "j_ml": 0,
+   "j_analyst": 1,
+   "j_web": 0,
+   "j_sales": 0,
+   "j_java": 2
+  }
+ }
+}

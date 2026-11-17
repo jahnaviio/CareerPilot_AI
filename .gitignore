@@ -1,0 +1,13 @@
+.env
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+data/*.db
+data/chroma/
+*.sqlite3
+.DS_Store
+.streamlit/secrets.toml
+htmlcov/
+.coverage

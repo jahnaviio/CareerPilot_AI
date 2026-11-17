@@ -1,0 +1,30 @@
+{
+ "_note": "SYNTHETIC test fixtures.",
+ "queries": [
+  {
+   "resume": "f01",
+   "query": "Experience relevant to a generative AI internship",
+   "gold": "Policy Assistant"
+  },
+  {
+   "resume": "f02",
+   "query": "Experience relevant to a data analyst role",
+   "gold": "Sales Dashboard"
+  },
+  {
+   "resume": "f03",
+   "query": "Experience relevant to a web developer internship",
+   "gold": "Task Board"
+  },
+  {
+   "resume": "f05",
+   "query": "Experience relevant to an NLP engineer role",
+   "gold": "Sentiment Classifier"
+  },
+  {
+   "resume": "f08",
+   "query": "Experience relevant to an AI automation role",
+   "gold": "Support Agent"
+  }
+ ]
+}
